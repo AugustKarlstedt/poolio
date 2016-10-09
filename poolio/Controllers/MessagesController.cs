@@ -36,8 +36,6 @@ namespace poolio
                 AddToReplyQueue("Hi there! This is the first time you're using Poolio, please make sure to update your address. Say \"update address\" for more info.");
             }
 
-
-
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
@@ -51,14 +49,14 @@ namespace poolio
                 Activity reply = activity.CreateReply(!string.IsNullOrEmpty(replyMessage) ? replyMessage : "Sorry, I couldn't understand that. Try saying \"I need a ride\" or \"Become a driver\"");
                 await connector.Conversations.ReplyToActivityAsync(reply);
 
-                foreach (var dm in DirectMessages)
+                var usernameList = "";
+                foreach (var username in DirectMessages)
                 {
-                    var conversationId = await connector.Conversations.CreateDirectConversationAsync(activity.Recipient, new ChannelAccount(name: "@dgore7"));
-                    reply.Conversation = new ConversationAccount(id: conversationId.Id, isGroup: false);
-                    reply.ChannelId = "#dgore7";
-                    reply.Text = $"Hi there, @{dm}! @{activity.From.Name} is looking for a ride to work.";
-                    await connector.Conversations.SendToConversationAsync(reply);
+                    usernameList += $"@{username} ";
                 }
+
+                reply.Text = $"Attention drivers: {usernameList} @{activity.From.Name} is looking for a ride!";
+                await connector.Conversations.SendToConversationAsync(reply);
             }
             else
             {
