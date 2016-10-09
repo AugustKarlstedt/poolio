@@ -27,6 +27,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="Address" Type="nvarchar" MaxLength="1024" />
+          <Property Name="Latitude" Type="float" />
+          <Property Name="Longitude" Type="float" />
         </EntityType>
         <Association Name="FK_Drivers_Users">
           <End Role="Users" Type="Self.Users" Multiplicity="1" />
@@ -85,6 +87,8 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Username" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Latitude" Type="Double" />
+          <Property Name="Longitude" Type="Double" />
           <NavigationProperty Name="Drivers" Relationship="PoolioModel.FK_Drivers_Users" FromRole="User" ToRole="Driver" />
         </EntityType>
         <Association Name="FK_Drivers_Users">
@@ -125,6 +129,8 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="PoolioModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

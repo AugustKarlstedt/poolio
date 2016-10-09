@@ -22,6 +22,8 @@ namespace poolio
 
         private Queue<string> _replyMessages = new Queue<string>();
 
+        private List<string> DirectMessages { get; set; }
+
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -33,6 +35,8 @@ namespace poolio
                 DbController.CreateUser(activity.From.Name);
                 AddToReplyQueue("Hi there! This is the first time you're using Poolio, please make sure to update your address. Say \"update address\" for more info.");
             }
+
+
 
             if (activity.Type == ActivityTypes.Message)
             {
@@ -46,6 +50,15 @@ namespace poolio
 
                 Activity reply = activity.CreateReply(!string.IsNullOrEmpty(replyMessage) ? replyMessage : "Sorry, I couldn't understand that. Try saying \"I need a ride\" or \"Become a driver\"");
                 await connector.Conversations.ReplyToActivityAsync(reply);
+
+                foreach (var dm in DirectMessages)
+                {
+                    var conversationId = await connector.Conversations.CreateDirectConversationAsync(activity.Recipient, new ChannelAccount(name: "@dgore7"));
+                    reply.Conversation = new ConversationAccount(id: conversationId.Id, isGroup: false);
+                    reply.ChannelId = "#dgore7";
+                    reply.Text = $"Hi there, @{dm}! @{activity.From.Name} is looking for a ride to work.";
+                    await connector.Conversations.SendToConversationAsync(reply);
+                }
             }
             else
             {
@@ -112,6 +125,12 @@ namespace poolio
         {
             string username = activity.From.Name;
 
+            if (action != "Update Address" && !DbController.AddressPopulated(activity.From.Name))
+            {
+                AddToReplyQueue("Whoops. Looks like you need to update your address. Say \"update address\" to get started.");
+                return;
+            }
+
             switch (action)
             {
                 case "Find Ride":
@@ -119,9 +138,8 @@ namespace poolio
                     // Notify all current drivers within N miles that person X needs a ride
                     //  
                     //
-
-
-                    AddToReplyQueue("");
+                    DirectMessages = DbController.GetNearbyDriverUsernames(username);
+                    AddToReplyQueue($"{DirectMessages.Count} nearby drivers were notified that you need a ride.");
 
                     break;
 
@@ -161,8 +179,6 @@ namespace poolio
                     break;
 
             }
-
-            Console.WriteLine(action);
         }
 
         private void AddToReplyQueue(string message)

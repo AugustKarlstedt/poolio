@@ -5,8 +5,8 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="fdf64446f4374e6dbb6629880abfe920" Name="Diagram1">
-        <EntityTypeShape EntityType="PoolioModel.Driver" Width="1.5" PointX="3" PointY="1" />
-        <EntityTypeShape EntityType="PoolioModel.FailureMessage" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="PoolioModel.Driver" Width="1.5" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="PoolioModel.FailureMessage" Width="1.5" PointX="2.75" PointY="3.75" />
         <EntityTypeShape EntityType="PoolioModel.User" Width="1.5" PointX="0.75" PointY="0.875" />
         <AssociationConnector Association="PoolioModel.FK_Drivers_Users" />
       </Diagram>
