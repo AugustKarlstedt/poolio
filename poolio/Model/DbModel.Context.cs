@@ -26,5 +26,8 @@ namespace poolio.Model
         }
     
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Driver> Drivers { get; set; }
+        public virtual DbSet<Rider> Riders { get; set; }
+        public virtual DbSet<ActionFailureMessage> ActionFailureMessages { get; set; }
     }
 }

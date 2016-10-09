@@ -6,6 +6,11 @@
     <edmx:Diagrams>
       <Diagram DiagramId="fdf64446f4374e6dbb6629880abfe920" Name="Diagram1">
         <EntityTypeShape EntityType="PoolioModel.User" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PoolioModel.Driver" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="PoolioModel.Rider" Width="1.5" PointX="5.25" PointY="0.875" />
+        <AssociationConnector Association="PoolioModel.FK_Drivers_Users" />
+        <AssociationConnector Association="PoolioModel.FK_Riders_Drivers" />
+        <EntityTypeShape EntityType="PoolioModel.ActionFailureMessage" Width="1.5" PointX="0.75" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

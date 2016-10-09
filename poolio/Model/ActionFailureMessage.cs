@@ -12,12 +12,10 @@ namespace poolio.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class ActionFailureMessage
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Address { get; set; }
-    
-        public virtual Driver Driver { get; set; }
+        public string Name { get; set; }
+        public string FailureMessage { get; set; }
     }
 }

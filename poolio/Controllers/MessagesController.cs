@@ -8,12 +8,20 @@ using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
 using Newtonsoft.Json;
 using poolio.Model;
+using Microsoft.Cognitive.LUIS;
+using poolio.Controllers;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace poolio
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private LuisController _luisController = new LuisController();
+
+        private Queue<string> _replyMessages = new Queue<string>();
+
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -23,25 +31,20 @@ namespace poolio
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-                // calculate something for us to return
-                int length = (activity.Text ?? string.Empty).Length;
 
-                string test = "";
-                using (var db = new PoolioEntities())
-                {
-                    test += db.Users.First().Address;
-                }
+                var intents = await _luisController.GetIntents(activity.Text);
+                ProcessIntents(intents);                
 
                 // return our reply to the user
-                Activity reply = activity.CreateReply($"You ({activity.From.Name}) sent {activity.Text} which was {length} characters. {test}");
+                Activity reply = activity.CreateReply(GenerateReply());
                 await connector.Conversations.ReplyToActivityAsync(reply);
             }
             else
             {
                 HandleSystemMessage(activity);
             }
-            var response = Request.CreateResponse(HttpStatusCode.OK);
-            return response;
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         private Activity HandleSystemMessage(Activity message)
@@ -72,5 +75,67 @@ namespace poolio
 
             return null;
         }
+
+        private void ProcessIntents(Intent[] intents)
+        {
+            foreach (var intent in intents)
+            {
+                ProcessActions(intent.Actions);
+            }
+        }
+
+        private void ProcessActions(Microsoft.Cognitive.LUIS.Action[] actions)
+        {
+            foreach (var action in actions)
+            {
+                if (action.Triggered)
+                {
+                    ExecuteAction(action.Name, action.Parameters);
+                }
+                else
+                {
+                    using (var db = new Model.PoolioEntities())
+                    {
+                        AddToReplyQueue(db.ActionFailureMessages.Where(afm => afm.Name == action.Name).FirstOrDefault().FailureMessage);
+                    }
+                }
+            }
+        }
+
+        private void ExecuteAction(string action, Parameter[] parameters)
+        {
+            switch (action)
+            {                
+                case "Find Ride":
+
+                    break;
+
+                case "Update Address":
+
+                    break;
+
+                default:
+                case "":
+                    break;
+
+            }
+
+            Console.WriteLine(action);
+        }
+
+        private void AddToReplyQueue(string message)
+        {
+            _replyMessages.Enqueue(message);
+        }
+
+        private string GenerateReply()
+        {
+            var reply = string.Join("\n", _replyMessages.ToArray());
+
+            _replyMessages.Clear();
+
+            return reply;
+        }
+
     }
 }

@@ -12,11 +12,10 @@ namespace poolio.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class User
+    public partial class Rider
     {
         public int Id { get; set; }
-        public string Username { get; set; }
-        public string Address { get; set; }
+        public int UserId { get; set; }
     
         public virtual Driver Driver { get; set; }
     }
