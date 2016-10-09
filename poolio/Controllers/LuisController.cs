@@ -9,8 +9,8 @@ namespace poolio.Controllers
 {
     public class LuisController
     {
-        private readonly string AppId = Environment.GetEnvironmentVariable("LUIS_APPID", EnvironmentVariableTarget.User);
-        private readonly string AzureSubscriptionKey = Environment.GetEnvironmentVariable("AZURE_SUBKEY", EnvironmentVariableTarget.User);
+        private readonly string AppId = Environment.GetEnvironmentVariable("LUIS_APPID");
+        private readonly string AzureSubscriptionKey = Environment.GetEnvironmentVariable("AZURE_SUBKEY");
 
         private LuisClient _client;
 
