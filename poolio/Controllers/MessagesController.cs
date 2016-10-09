@@ -28,15 +28,23 @@ namespace poolio
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+            if (!DbController.DoesUserExist(activity.From.Name))
+            {
+                DbController.CreateUser(activity.From.Name);
+                AddToReplyQueue("Hi there! This is the first time you're using Poolio, please make sure to update your address. Say \"update address\" for more info.");
+            }
+
             if (activity.Type == ActivityTypes.Message)
             {
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
 
                 var intents = await _luisController.GetIntents(activity.Text);
-                ProcessIntents(intents);                
+                ProcessIntents(intents, activity);
 
                 // return our reply to the user
-                Activity reply = activity.CreateReply(GenerateReply());
+                var replyMessage = GenerateReply();
+
+                Activity reply = activity.CreateReply(!string.IsNullOrEmpty(replyMessage) ? replyMessage : "Sorry, I couldn't understand that. Try saying \"I need a ride\" or \"Become a driver\"");
                 await connector.Conversations.ReplyToActivityAsync(reply);
             }
             else
@@ -76,41 +84,75 @@ namespace poolio
             return null;
         }
 
-        private void ProcessIntents(Intent[] intents)
+        private void ProcessIntents(Intent[] intents, Activity activity)
         {
-            foreach (var intent in intents)
+            foreach (var intent in intents.Where(i => i.Score > 0.5))
             {
-                ProcessActions(intent.Actions);
+                ProcessActions(intent.Actions, activity);
             }
         }
 
-        private void ProcessActions(Microsoft.Cognitive.LUIS.Action[] actions)
+        private void ProcessActions(Microsoft.Cognitive.LUIS.Action[] actions, Activity activity)
         {
             foreach (var action in actions)
             {
                 if (action.Triggered)
                 {
-                    ExecuteAction(action.Name, action.Parameters);
+                    ExecuteAction(action.Name, action.Parameters, activity);
                 }
                 else
                 {
-                    using (var db = new Model.PoolioEntities())
-                    {
-                        AddToReplyQueue(db.ActionFailureMessages.Where(afm => afm.Name == action.Name).FirstOrDefault().FailureMessage);
-                    }
+
+                    AddToReplyQueue(DbController.GetFailureMessage(action.Name));
                 }
             }
         }
 
-        private void ExecuteAction(string action, Parameter[] parameters)
+        private void ExecuteAction(string action, Parameter[] parameters, Activity activity)
         {
+            string username = activity.From.Name;
+
             switch (action)
-            {                
+            {
                 case "Find Ride":
+
+                    // Notify all current drivers within N miles that person X needs a ride
+                    //  
+                    //
+
+
+                    AddToReplyQueue("");
 
                     break;
 
                 case "Update Address":
+
+                    var updatedAddress = parameters.Where(p => p.Name == "Address").FirstOrDefault()?.ParameterValues.FirstOrDefault().Entity;
+
+                    if (DbController.UpdateUserAddress(username, updatedAddress))
+                    {
+                        AddToReplyQueue(updatedAddress.Count() > 0 ?
+                        $"Great! Your address has been updated to {updatedAddress}."
+                        : DbController.GetFailureMessage(action));
+                    }
+                    else
+                    {
+                        AddToReplyQueue("Uh oh. Your address failed to update. Can you please try again in a few moments?");
+                    }
+
+                    break;
+
+                case "Become Driver":
+
+                    if (!DbController.IsDriver(username))
+                    {
+                        DbController.BecomeDriver(username);
+                        AddToReplyQueue("You are now a driver! You'll be notified of nearby coworkers looking for rides. Thanks for being awesome.");
+                    }
+                    else
+                    {
+                        AddToReplyQueue("You are already a driver. If you'd like to no longer be a driver, say \"Stop being a driver.\"");
+                    }
 
                     break;
 

@@ -14,10 +14,17 @@ namespace poolio.Model
     
     public partial class User
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public User()
+        {
+            this.Drivers = new HashSet<Driver>();
+        }
+    
         public int Id { get; set; }
         public string Username { get; set; }
         public string Address { get; set; }
     
-        public virtual Driver Driver { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Driver> Drivers { get; set; }
     }
 }

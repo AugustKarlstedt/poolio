@@ -143,11 +143,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\LuisController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
-    <Compile Include="Model\ActionFailureMessage.cs">
-      <DependentUpon>DbModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Model\DbModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -169,7 +167,7 @@
     <Compile Include="Model\Driver.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Model\Rider.cs">
+    <Compile Include="Model\FailureMessage.cs">
       <DependentUpon>DbModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Model\User.cs">

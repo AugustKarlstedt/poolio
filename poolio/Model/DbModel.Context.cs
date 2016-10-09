@@ -25,9 +25,8 @@ namespace poolio.Model
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Driver> Drivers { get; set; }
-        public virtual DbSet<Rider> Riders { get; set; }
-        public virtual DbSet<ActionFailureMessage> ActionFailureMessages { get; set; }
+        public virtual DbSet<FailureMessage> FailureMessages { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }
