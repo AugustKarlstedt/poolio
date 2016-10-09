@@ -66,9 +66,9 @@
       <HintPath>..\packages\Microsoft.Bot.Builder.3.0.0\lib\net46\Microsoft.Bot.Connector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Cognitive.LUIS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Microsoft.Cognitive.LUIS.dll</HintPath>
+    <Reference Include="Microsoft.Cognitive.LUIS, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Cognitive.LUIS.1.0.0\lib\portable45-net45+win8+wpa81\Microsoft.Cognitive.LUIS.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions, Version=1.0.2.33, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
